@@ -394,10 +394,163 @@ for(int gap = next_gap(length); gap > 0; gap = next_gap(gap)){
 }
 }
 
-//
+//use hash_map to keep track of frequency TC = O(n) SC = O(n)
+// vector <int> miss_rep(vector<int> &nums){
+//     int n =nums.size();
+//     unordered_map <int,int> hash_map;
+//     for(int i = 0; i < n ; i++) hash_map[nums[i]]++;
+//     int missing = 0 ; int repeated = 0;
+// for(int i = 1 ; i <= n ; i++){
+//     if(hash_map[i] == 0) missing = i;
+//     else if(hash_map[i] == 2) repeated = i;
+// }
+// return {repeated,missing};
+// }
+
+//using maths TC = O(n) SC = O(1)
+// vector <int> miss_rep(vector <int> &nums){
+// long long n = nums.size();
+// long long Sn= (n*(n+1))/2;
+// long long Sn2 = (n*(n+1)*(2*n+1))/6;
+// long long sum = 0; long long sq_sum = 0;
+// for(int i = 0; i < n ; i++){
+//     sum += nums[i];
+//     sq_sum += nums[i]*nums[i];
+// }
+// long long diff = sum - Sn;
+// long long  sq_diff = sq_sum - Sn2;
+// long long add = sq_diff/diff;
+// int repeated = (add+diff)/2;
+// int missing = (add-diff)/2;
+// return {repeated,missing};
+// }
+
+//placing each number at its correct index (cyclic sort) TC = O(n) SC = O(1)
+// vector <int> miss_rep(vector <int> &nums){
+// int n = nums.size();
+// int i = 0; 
+// while(i < n){
+//     // the correct position for say 3 is index 2
+//     int correct_index = nums[i]-1;
+//     if(nums[i] != nums[correct_index]) swap(nums[i],nums[correct_index]);
+//     else i++;
+// }
+// // the repeated number settles in the missing number index 
+// for(int i = 0 ; i < n ; i++){
+// if(nums[i] != i +1) {
+//     int repeated = nums[i];
+//     int missing = i +1;
+//     return {repeated,missing};
+// }
+// }
+// return {-1,-1};
+// }
+
+//using XOR method TC = O(n) SC = O(1)
+vector <int> miss_rep(vector<int> &nums){
+int n = nums.size();
+int XOR_1 = 0; int XOR_2 = 0;
+for (int i = 0 ; i < n ; i++){
+     XOR_1 ^= (i+1);
+     XOR_2 ^= nums[i];
+}
+// this contains xor of missing number and repeated number
+int XOR_3 = XOR_1 ^ XOR_2;
+// extract the righmost set bit
+int bit= (XOR_3) & (-XOR_3);
+int bucket1 = 0; int bucket2 = 0;
+// divide array elements into two groups
+for(int i =0 ; i < n ; i ++){
+    if(nums[i] & bit) bucket1 ^= nums[i];
+    else  bucket2 ^= nums[i]; 
+}
+//divide numbers into two groups
+for(int i = 1 ; i <= n; i++){
+    if(i&bit) bucket1 ^= i;
+    else bucket2 ^= i;
+}
+// bucket 1 and bucket 2 contains missing and repeated number 
+int missing = 0 ; int repeating = 0;
+// check which is missing and which is repeating
+for(int i = 0 ; i < n ; i++) {
+    if(nums[i] == bucket1){
+     repeating = bucket1;
+     missing = bucket2;
+     break;
+}
+else if(nums[i] == bucket2){
+    repeating = bucket2;
+    missing = bucket1;
+    break;
+}
+}
+return {repeating,missing};
+}
+
+//check every pair using two nested loops TC = O(n^2) SC = O(1)
+int inversions(vector<int> &nums){
+    int n = nums.size();
+    int count = 0;
+    for(int i = 0 ; i < n ; i++){
+        for(int j = i+1 ; j < n; j++){
+            if(nums[i] > nums[j]) count++;
+        }
+    }
+    return count;
+}
+
+// check every subarray TC = O(n^2) SC = O(1)
+// int max_product(vector <int> &nums){
+//     int n = nums.size();
+//     int max_product = INT_MIN;
+//     for(int i = 0 ; i < n ; i++){
+//         int product = 1;
+//         for(int j = i; j< n ; j++){
+//             product *= nums[j];
+//              max_product = max(product,max_product);
+//         }
+//     }
+//     return max_product;
+// }
+
+// when sign flips are possible track both extremes 
+// used a single loop and updated curr max and min TC = O(n) SC = O(1)
+// int max_product(vector <int> &nums){
+// int n = nums.size();
+// int curr_min = nums[0];
+// int curr_max = nums[0];
+// int maximum = nums[0]; 
+// for(int i = 1 ; i < n ; i++){ 
+// int temp = curr_max;
+// // tracking the minimum and maximum product possible at that index
+// curr_max= max(nums[i]*curr_max,max(nums[i]*curr_min,nums[i]));
+// curr_min = min(nums[i]*curr_min,min(nums[i]*temp,nums[i]));
+// maximum = max(maximum,curr_max);
+// }
+// return maximum;
+// }
+
+// if no of negative = even take the whole subarray 
+// if no of negative = odd remove either the prefix product till first negative(suffix traversal) or suffix product after last negative(prefix traversal)
+// if encounter a zero reset the product to one to continue the flow 
+// using prefix and suffix traversal TC = O(n) SC = O(1)
+int max_product(vector<int> &nums){
+int n = nums.size();
+int prefix = 1 ; int suffix = 1;
+int result = INT_MIN;
+for(int i = 0 ; i < n ; i++){
+    if(prefix == 0 ) prefix = 1;
+    if(suffix == 0) suffix = 1;
+prefix *= nums[i];
+suffix *= nums[n-i-1];
+result = max(result,max(prefix,suffix));
+}
+return result;
+}
 
 int main()
 {
+
 //    vector<int> nums = {3, -5, 3, 4, -4, 3, -2, 3, 8, -4, 9, 5, 7, -2, 5, -8, -2, 7, 4, 3, -7, 4, 4};
 //    vector<vector<int>> result = four_sum(nums, 15);
 //     for (auto it : result)
@@ -418,10 +571,17 @@ int main()
 //         cout << "\n";
     //}
 
-vector<int> nums1 = {2,4,7,9,12,15,18,21,25,30};
-vector<int> nums2 = {1,3,5,8,10,11,16,20,22,28};
-//vector <int> num = merge_sorted(nums1,nums2);
-merge_harder(nums1,nums2);
-for(auto it : nums1) cout << it << " ";
-for(auto it : nums2) cout << it << " ";
+// vector<int> nums1 = {2,4,7,9,12,15,18,21,25,30};
+// vector<int> nums2 = {1,3,5,8,10,11,16,20,22,28};
+// //vector <int> num = merge_sorted(nums1,nums2);
+// merge_harder(nums1,nums2);
+// for(auto it : nums1) cout << it << " ";
+// for(auto it : nums2) cout << it << " ";
+
+// vector <int> nums = {1,3,6,2,3,4,7,5,9};
+// vector <int> result = miss_rep(nums);
+// cout << result[0] << " " << result[1];
+
+vector <int> nums = {-5,0,-4,0,-1};
+cout << max_product(nums);
 }
