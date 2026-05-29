@@ -134,31 +134,139 @@ if(result[0] == -1) result.push_back(-1);
 return result;
 }
 
-//This is not the leetcode version here is assumed that the value of k is given 
-// Assume a virtual array from index k to n-1+k and extract true value of index using %n TC = O(log n) SC = O(1)
-// int search_left_rotated(vector<int> &nums,int target,int k){
-//     int n = nums.size();
-//     int low = k ; 
-//     int high = n -1 + k;
-//     while(low <= high){
-// int mid = low + (high-low)/2;
-// if(nums[mid%n] == target) return mid%n;
-// else if(nums[mid%n] < target) low = mid + 1;
-// else high = mid - 1;
-// }
-// return -1;
-// }
-
-//
-int search_left_rotated(vector<int> &nums, int target){
-
+// The elements are distinct
+// This will work either if the array is left or right sorted
+// either left or right part of any element is always sorted TC = O(log n) SC= O(1)
+int search_sorted_rotated(vector<int> &nums,int target){
+int n = nums.size();
+int low = 0 ; 
+int high = n-1;
+while(low <= high){
+// elememt under scrutiny
+    int mid = low + (high-low)/2; 
+    if(nums[mid] == target) return mid;
+    // left part is sorted
+    if(nums[low] <= nums[mid]){
+        // target in sorted part
+if(nums[low] <= target && target < nums[mid])high = mid - 1;
+// discard the sorted part
+else low = mid +1;
+    }
+    //  right part is sorted
+    else{
+        //target in sorted part
+if(nums[mid] < target && target <= nums[high]) low = mid +1;
+//discard the sorted part
+else high = mid -1;
+    }
+}
+return -1;
 }
 
+// This function finds the pivot for left rotated arrays
+int find_left_pivot(vector<int> &nums){
+int n = nums.size();
+int low = 0; 
+int high = n-1;
+// finding the pivot
+while(low < high){
+    int mid = low + (high-low)/2;
+    // the observation is that the pivot always lie in unsorted region
+    if(nums[mid] > nums[high]) low = mid + 1;
+    // mid could be the pivot
+    else high = mid;
+}
+return low;
+}
+
+// Assume a virtual array from index k to n-1+k and extract true value of index using %n TC = O(log n) SC = O(1)
+int search_left_rotated(vector<int> &nums,int target){
+    int n = nums.size();
+    int k = find_left_pivot(nums);
+    int low = k ; 
+    int high = n -1 + k;
+    while(low <= high){
+int mid = low + (high-low)/2;
+int real = mid%n;
+if(nums[real] == target) return real;
+else if(nums[real] < target) low = mid + 1;
+else high = mid - 1;
+}
+return -1;
+}
+
+// Duplicates are present
+// It creates problem when all the three poniters point to same value 
+// TC = O(log n) {average case} TC = O(n/2) == O(n) {worst case} -> All duplicates SC = O(1) 
+bool find_sorted_rotated(vector<int> &nums,int target){
+    int n = nums.size();
+    int low = 0 ;
+     int high = n-1;
+     while(low <= high){
+         int mid = low + (high-low)/2;
+         // if target found
+         if(nums[mid] == target) return true;
+         // edge case where sorted part cannot be determined
+         if(nums[low] == nums[mid] && nums[mid] == nums[high]){
+             low++;
+            high--;
+            continue;
+        }
+// left half is sorted 
+if(nums[low] <= nums[mid]){
+    if(nums[low] <= target && nums[mid] > target) high = mid -1;
+    else low = mid + 1;
+}
+//right half is sorted
+else{
+    if(nums[mid] < target && target <= nums[high]) low = mid + 1;
+    else high = mid - 1;
+}
+     }
+     return false;
+}
+
+// The elements are distinct 
+// The pivot point is the index for minimum value TC = O(log n) SC = O(1)
+int min_sorted_rotated(vector<int> &nums){
+int k = find_left_pivot(nums);
+return nums[k];
+}
+
+//The key observation is that before finding the unique element pair starts at even index and ends at odd index 
+// handle the edge cases and then use binary search TC = O(log n) SC = O(1)
+int single_element(vector <int> &nums){
+    int n = nums.size();
+    // cheking all the edge cases
+    if(n == 1) return nums[0];
+    if(nums[0] != nums[1]) return nums[0];
+    if(nums[n-1] != nums[n-2]) return nums[n-1];
+    int low = 1 ;
+    int high = n -2 ;
+    while(low <=high){
+int mid = low + (high-low)/2;
+// checking if mid is the target
+if(nums[mid] != nums[mid-1] && nums[mid] != nums[mid+1]) return nums[mid];
+// target in right half (pairing invalid)
+if((mid%2 == 0 && nums[mid] == nums[mid +1]) || (mid%2 == 1 && nums[mid] == nums[mid - 1])) low = mid +1;
+//target is in left half (pairing invaid)
+else high = mid - 1;
+    }
+    return -1;
+}
+
+
 int main(){
-    vector <int> nums = {1,5,7,9,12,16,17,18,21,26,28,34};
+    vector <int> nums = {12,16,17,18,21,26,28,34,1,5,7,9};
+
     //cout << recursive_search(nums,0,10,21);
    // cout << lower_bound(nums,15) << " " << upper_bound(nums,15) << " "  << insert_element(nums,76);
     //cout << floor_ceiling(nums,16).first << " " << floor_ceiling(nums,16).second;
    // cout << occurence_range(nums,16)[0] << " " << occurence_range(nums,16)[1];
+//cout << search_sorted_rotated(nums,18) << " " << search_left_rotated(nums,18);
+// cout << boolalpha << find_sorted_rotated(nums,17);
+//cout << min_sorted_rotated(nums);
+cout << single_element(nums);
+
 
 }
