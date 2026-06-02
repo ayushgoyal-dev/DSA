@@ -16,7 +16,7 @@ using namespace std;
 //     return -1;
 // }
 
-// works only on sorted arrays TC = O(log n) SC = O(1)
+// works only on sorted arrays TC = O(log n) SC = O(log n)
 int recursive_search(vector<int> &nums,int low,int high,int target){
     if(low > high) return -1;
     int mid = low + (high-low)/2;
@@ -255,8 +255,25 @@ else high = mid - 1;
     return -1;
 }
 
+// The key observation is that if mid is small than its next neighbour then a peak element must lie in the right region 
+// TC = O(log n) SC= O(1)
+int peak_element(vector<int> &nums){
+    int n = nums.size();
+    if(n == 1) return 0;
+    if(nums[0] > nums[1]) return 0;
+    if(nums[n-1] > nums[n-2]) return n-1;
+    int low = 1;
+    int high = n-2;
+    while(low < high){
+        int mid = low + (high-low)/2;
+        if(nums[mid] > nums[mid-1] && nums[mid] > nums[mid+1]) return mid;
+        if(nums[mid] <= nums[mid+1]) low = mid + 1;
+        else high = mid;
+    }
+    return low;
+}
 
-int main(){
+    int main(){
     vector <int> nums = {12,16,17,18,21,26,28,34,1,5,7,9};
 
     //cout << recursive_search(nums,0,10,21);
@@ -265,8 +282,7 @@ int main(){
    // cout << occurence_range(nums,16)[0] << " " << occurence_range(nums,16)[1];
 //cout << search_sorted_rotated(nums,18) << " " << search_left_rotated(nums,18);
 // cout << boolalpha << find_sorted_rotated(nums,17);
-//cout << min_sorted_rotated(nums);
-cout << single_element(nums);
-
+//cout << min_sorted_rotated(nums)
+cout << single_element(nums) << " " << peak_element(nums);
 
 }
