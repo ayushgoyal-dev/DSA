@@ -82,9 +82,7 @@ bool isIsomorphic(string s, string t) {
     for(int i = 0; i< m ; i++) mpp[s[i]] = '-1';
     for(int i = 0 ; i < n; i++) {
         if(mpp[s[i]] == '-1') mpp[s[i]] = t[i];
-        else{
-         
-        }
-    }
+        
+      }
     return true;
     }
