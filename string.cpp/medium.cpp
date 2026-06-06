@@ -67,36 +67,28 @@ for(int i = 0 ; i< n-1; i++){
 return sum + roman[s[n-1]]; // adding the last character
 }
 
+// iterate from start of the string to the end while simulating every condition TC = O(n) SC = O(1)
 int myAtoi(string s) {
-bool marked = false;
-bool started = false;
-char sign = '+';
-string ans = {};
-for(char c : s){
-    if(!marked && !started){
-        if(c == ' ') continue;
-        else if( c == '-') {sign = '-'; marked = true;continue;}
-        else if (c == '+') {marked = true;continue;}
-    }
-    if(!started){
-        if(c == '0') {marked = true;continue;}
-        else if(c == '1' || c == '2' || c == '3'|| c == '4'|| c == '5'|| c == '6'|| c == '7'|| c == '8'|| c == '9') {ans += c;started = true;continue;}
-        else break;  
-    }
-    if(c == '0' ||c == '1' || c == '2' || c == '3'|| c == '4'|| c == '5'|| c == '6'|| c == '7'|| c == '8'|| c == '9') ans += c;
-    else break;
+int n = s.size();
+int i = 0;
+// ignoring starting whitespaces
+while(i < n && s[i] == ' ')i++;
+// determining the sign
+int sign = 1;
+if(i < n && (s[i] == '+' || s[i] == '-')){sign = (s[i] == '-') ? -1 : 1; i++;}
+// ignoring leading zeros
+while(i < n && s[i] == '0') i++;
+// initilising answert and limit
+long long num = 0;
+long long limit = (sign == -1) ? -(long long)INT_MIN : INT_MAX;
+// parsing string and cheking overflow
+while( i < n && s[i] >= '0' && s[i] <= '9'){
+   int digit = s[i] -'0';
+   if(num > (limit-digit)/10) {num = limit;break;}
+   else num = num*10 + digit;
+   i++;
 }
-if(ans.empty()) return 0;
-int m = ans.size();
-long long final = 0;
-for(int i = 0; i < m ; i++){
-    int digit = ans[i] -48;
-    long long limit = (sign == '-') ? -(long long)INT_MIN : INT_MAX;
-    if(final > (limit - digit)/10) {final = (sign == '-') ? INT_MIN : INT_MAX; return final;}
-final = final*10 + digit;
-}
-if(sign == '-')final = -final;
-return (int)final;
+return (int)(num*sign);
 }
 
 // use sliding window to control number of distinct characters in substring 
@@ -122,37 +114,89 @@ return count;
 // use helper function TC = O(n) SC = O(n) 
 int exactly_kdistinct(string &s,int k){return atmost_kdistinct(s,k) - atmost_kdistinct(s,k-1);}
 
-string longestPalindrome(string s) {
-int n = s.size();
-if( n == 1 || n == 2) return s;
-int centre = n/2;
-int left = centre -1;
-int right = centre +1;
-int length = 0;
-string final = {};
+// string longestPalindrome(string s) {
+// int n = s.size();
+// if( n == 1 || n == 2) return s;
+// int centre = n/2;
+// int left = centre -1;
+// int right = centre +1;
+// int length = 0;
+// string final = {};
+// while(left >= 0 && right < n){
+//     if(s[left] == s[right]){if(right-left+1 > length ){length = right-left+1;final = s.substr(left,length);}; left--;right++;}
+//     else {
+//         centre++;
+//         left = centre - 1;
+//         right = centre + 1;
+// }
+//     }
+// centre = n/2;
+// left = centre -1;
+// right = centre +1;
+// while(left >= 0 && right < n ){
+//     if(s[left] == s[right]){if(right-left+1 > length ){length = right-left+1;final = s.substr(left,length);}; left--;right++;}
+//     else {
+//         centre--;
+//         left = centre - 1;
+//         right = centre + 1;
+// }
+//     }
+// if(!final.empty())return final;
+// else {
+//     for(int i = 1; i < n; i++) if(s[i] == s[i-1]) return s.substr(i-1,2);
+//     return s.substr(0,1);
+// }
+// }
 
-while(left >= 0 && right < n){
-    if(s[left] == s[right]){if(right-left+1 > length ){length = right-left+1;final = s.substr(left,length);}; left--;right++;}
-    else {
-        centre++;
-        left = centre - 1;
-        right = centre + 1;
-}
+// iterate over the wtring and search for valid odd length and even length palindromes using while loop
+// expanding around centre method TC = O(n^2) SC = O(1)
+string longestPalindrome(string s) {
+        int n = s.size();
+        int left,right;
+        pair<int,int> p = {INT_MIN,0};  // length of palindrome and starting index of palindrome respectively
+        // checking for even length palindrome
+        for(int i = 1 ; i< n ;i++){
+            left = i-1;
+            right = i;
+            while( left >= 0 && right < n && s[left] == s[right]){
+                if(p.first < right -left +1){  p.first = right-left+1; p.second = left;}
+                left--;
+                right++;
+        }
+        }
+// checking for odd length palindrome
+for(int i = 1;i < n-1;i++){
+    left = i-1;
+    right = i+1;
+            while( left >= 0 && right < n && s[left] == s[right]){
+ if(p.first < right -left +1){  p.first = right-left+1; p.second = left;}
+    left--;
+    right++;
     }
-centre = n/2;
-left = centre -1;
-right = centre +1;
-while(left >= 0 && right < n ){
-    if(s[left] == s[right]){if(right-left+1 > length ){length = right-left+1;final = s.substr(left,length);}; left--;right++;}
-    else {
-        centre--;
-        left = centre - 1;
-        right = centre + 1;
 }
+if(p.first == INT_MIN) return s.substr(0,1); // single length palindrome
+return s.substr(p.second,p.first);
     }
-if(!final.empty())return final;
-else {
-    for(int i = 1; i < n; i++) if(s[i] == s[i-1]) return s.substr(i-1,2);
-    return s.substr(0,1);
-}
-}
+
+// Iterate over all possible strings and use hashmap TC = O(n^2) SC = O(1) (map is of constant size)
+int beautySum(string s) {
+  int n = s.size();
+  int sum = 0; // sum of beauty of substrings
+  // All possible substrings TC = O(n^2)
+  for(int i = 0 ; i < n ; i++){ 
+    unordered_map <char,int> mpp; // hashmap
+    for(int j = i ; j < n;j++){
+        mpp[s[j]]++;
+        int high = INT_MIN; int low = INT_MAX; // max and min freqeuncy 
+        // if alphabets were unrestrained then TC = (n^3) but currently TC = O(n^2) as only 26 alphabets 
+    for(auto it : mpp){
+   low = min(low,it.second);
+   high = max(high,it.second); 
+    }
+    sum += high - low;
+    }
+  }   
+  return sum;   
+    }
+
+  
