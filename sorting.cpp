@@ -77,7 +77,7 @@ void merge(int low, int mid, int high, vector<int> &arr)
             right++;
         }
     }
-
+// remaining elements 
     while (left <= mid)
     {
         temp.push_back(arr[left]);
@@ -89,7 +89,7 @@ void merge(int low, int mid, int high, vector<int> &arr)
         temp.push_back(arr[right]);
         right++;
     }
-
+// pushing the sorted values in the original array 
     for (int i = low; i <= high; i++)
     {
         arr[i] = temp[i - low];

@@ -112,7 +112,6 @@ int remove_duplicates(vector <int> &nums){
    return i+1;
 }
 
-
 // using swaps TC = O(n) SC = O(1)
 // void rotate(vector<int> &nums){
 // int n = nums.size();
@@ -166,7 +165,6 @@ void rotate(vector<int> &nums, int k ,char ch ){
     }
 }
 
-
 // using temp and for loop TC = O(n) SC = O(k)
 void left_rotate_array(int n, int k, int arr[])
 
@@ -187,7 +185,7 @@ void left_rotate_array(int n, int k, int arr[])
 
 // TC = O(n) SC = O(1)
 
-// using erase and insert TC - O(n^2) SC = O(1)
+// using erase and insert TC = O(n^2) SC = O(1)
 // void move_zeroes(vector <int> &arr,int n){
 //        int k =0;
 // for(int i = 0 ; i < n -k; i++){
@@ -473,19 +471,18 @@ int n = nums.size();
 
 }
 
-
-
 int main()
 {
-    int n;
-    cin >> n;
-   vector<int> arr(n);
-    for (int i = 0; i < n; i++)
-        cin >> arr[i];
-    // move_zeroes(arr,n);
-  for (int i = 0; i < n; i++)
-        cout << arr[i] << " ";
 
+//     int n;
+//     cin >> n;
+//    vector<int> arr(n);
+//     for (int i = 0; i < n; i++)
+//         cin >> arr[i];
+
+    // move_zeroes(arr,n);
+  //for (int i = 0; i < n; i++)
+        //cout << arr[i] << " ";
 
     // int arr[n];
     // for (int i = 0; i < n; i++)
@@ -493,13 +490,10 @@ int main()
     //     remove_duplicates(n,arr);
     //     for(int i =0 ; i < n ; i++) cout << arr[i];
 
-
     // max_element(n,arr);
     // cout << check_sorted(n,arr);
     // int k;
     // cin >> k;
     // left_rotate_array(n,k,arr);
 
-
-  
 }

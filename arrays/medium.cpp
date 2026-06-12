@@ -503,21 +503,15 @@ int main(){
 // nums.push_back(x);
 // }
 
-
-
-
 //  list <int> ls = leaders_array(nums);
 // for(int x : ls){
 //     cout << x << " ";
 // }
 
-
 // int target;
 // cin >> target;
 // vector<int> pair = two_sum(nums,target);
 // cout << pair[0] << " "  << pair[1];
-
-
 
 //    vector<vector<int>> matrix = {{1,1,1},{1,0,1},{1,1,1}};
 //     set_zeroes(matrix);
@@ -528,15 +522,11 @@ int main(){
 //         cout << endl;
 //     }
 
-
 // vector<vector<int>> matrix = {{1,2,3,4},{5,6,7,8},{9,10,11,12},{13,14,15,16}};
 // vector <int> result = spiral_print(matrix);
 // for(int i = 0 ; i < result.size() ; i++){
 //     cout << result[i] << " ";
 // }
-
-
-
 
 return 0;
  }
